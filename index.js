@@ -1,13 +1,15 @@
-var postcss = require('postcss');
+const postcss = require('postcss');
 
-module.exports = postcss.plugin('PLUGIN_NAME', function (opts) {
-    opts = opts || {};
+module.exports = postcss.plugin('postcss-globals', options => {
+  return root => {
+    options = options || {};
 
-    // Work with options here
-
-    return function (root, result) {
-
-        // Transform CSS AST here
-
-    };
+    root.walkAtRules(rule => {
+      if (rule.name === 'import') {
+        for (let name in options.variables) {
+          rule.params = rule.params.replace(name, options.variables[name]);
+        }
+      }
+    });
+  };
 });
